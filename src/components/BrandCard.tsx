@@ -1,0 +1,215 @@
+"use client";
+
+import React, { useState } from "react";
+import { Brand } from "../types";
+import styles from "./BrandCard.module.css";
+
+interface BrandCardProps {
+  brand: Brand;
+  onDelete: (id: string) => void;
+  onToggleVisibility: (id: string) => void;
+}
+
+export default function BrandCard({
+  brand,
+  onDelete,
+  onToggleVisibility,
+}: BrandCardProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  // Helper to extract initials
+  const getInitials = (name: string) => {
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
+
+  // Determine rating style and label
+  const getRatingMeta = (score: number) => {
+    if (score >= 9.0) {
+      return { class: styles.scoreExcellent, label: "Excellent" };
+    } else if (score >= 8.0) {
+      return { class: styles.scoreGood, label: "Very Good" };
+    } else if (score >= 7.0) {
+      return { class: styles.scoreAverage, label: "Good" };
+    } else {
+      return { class: styles.scorePoor, label: "Average" };
+    }
+  };
+
+  const ratingMeta = getRatingMeta(brand.score);
+  const isHidden = brand.visibility === "hidden";
+
+  const handleDeleteClick = () => {
+    if (isDeleting) {
+      onDelete(brand.id);
+    } else {
+      setIsDeleting(true);
+      // Reset confirmation state after 3 seconds if not clicked again
+      setTimeout(() => setIsDeleting(false), 3000);
+    }
+  };
+
+  return (
+    <div
+      className={`${styles.card} ${
+        brand.type === "casino" ? styles.cardCasino : styles.cardSportsbook
+      } ${isHidden ? styles.hiddenCard : ""} animate-scale-up`}
+    >
+      {/* Card Header */}
+      <div className={styles.header}>
+        <div className={styles.logoContainer}>
+          {brand.logo ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              src={brand.logo}
+              alt={`${brand.name} logo`}
+              className={styles.logo}
+              onError={(e) => {
+                // Fail-safe if image source is broken
+                (e.target as HTMLElement).style.display = "none";
+              }}
+            />
+          ) : (
+            <div
+              className={`${styles.logoFallback} ${
+                brand.type === "casino"
+                  ? styles.fallbackCasino
+                  : styles.fallbackSportsbook
+              }`}
+            >
+              {getInitials(brand.name)}
+            </div>
+          )}
+          <div>
+            <h3 className={styles.name}>{brand.name}</h3>
+            <div className={styles.badgeGroup}>
+              <span
+                className={`${styles.typeBadge} ${
+                  brand.type === "casino"
+                    ? styles.typeCasino
+                    : styles.typeSportsbook
+                }`}
+              >
+                {brand.type}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.badgeGroup}>
+          <span
+            className={`${styles.statusBadge} ${
+              isHidden ? styles.statusHidden : styles.statusVisible
+            }`}
+          >
+            <span className={styles.pulseDot} />
+            {isHidden ? "Hidden" : "Visible"}
+          </span>
+        </div>
+      </div>
+
+      {/* Welcome Offer Panel */}
+      <div className={styles.offerSection}>
+        <div className={styles.offerTitle}>Welcome Offer</div>
+        <div className={styles.offerContent}>{brand.welcomeOffer}</div>
+      </div>
+
+      {/* Details Row: Rating & Locations */}
+      <div className={styles.detailsRow}>
+        {/* Rating Score */}
+        <div className={styles.scoreContainer}>
+          <div className={`${styles.scoreCircle} ${ratingMeta.class}`}>
+            {brand.score.toFixed(1)}
+          </div>
+          <div className={styles.scoreLabel}>
+            <span className={styles.scoreVal}>{brand.score.toFixed(1)} Rating</span>
+            <span className={styles.scoreText}>{ratingMeta.label}</span>
+          </div>
+        </div>
+
+        {/* Locations */}
+        <div className={styles.locationsContainer}>
+          <div className={styles.locTitle}>Locations</div>
+          <div className={styles.locPills}>
+            {brand.locations.map((loc) => (
+              <span key={loc} className={styles.locPill}>
+                {loc}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Card Footer Actions */}
+      <div className={styles.cardFooter}>
+        <button
+          onClick={() => onToggleVisibility(brand.id)}
+          className={styles.toggleVisibilityBtn}
+          title={isHidden ? "Show on frontend" : "Hide from frontend"}
+        >
+          {isHidden ? (
+            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+              Show
+            </span>
+          ) : (
+            <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                <line x1="1" y1="1" x2="23" y2="23" />
+              </svg>
+              Hide
+            </span>
+          )}
+        </button>
+
+        <button
+          onClick={handleDeleteClick}
+          className={styles.deleteBtn}
+          style={isDeleting ? { background: "var(--accent-danger)", color: "#ffffff" } : {}}
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+            <line x1="10" y1="11" x2="10" y2="17" />
+            <line x1="14" y1="11" x2="14" y2="17" />
+          </svg>
+          {isDeleting ? "Confirm?" : "Remove"}
+        </button>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,70 @@
+import { Brand } from "./types";
+
+export const INITIAL_BRANDS: Brand[] = [
+  {
+    id: "brand-1",
+    name: "Apex Casino",
+    type: "casino",
+    logo: "", // Will render a beautiful default Casino gradient
+    welcomeOffer: "100% Match up to $1,500 + 200 Free Spins",
+    score: 9.8,
+    locations: ["US", "CA", "GB"],
+    visibility: "visible",
+    createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "brand-2",
+    name: "Velocity Sportsbook",
+    type: "sportsbook",
+    logo: "", // Will render a beautiful default Sportsbook gradient
+    welcomeOffer: "Risk-Free First Bet up to $500",
+    score: 9.5,
+    locations: ["US", "CA", "DE", "AT"],
+    visibility: "visible",
+    createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "brand-3",
+    name: "Crown Spin Casino",
+    type: "casino",
+    logo: "",
+    welcomeOffer: "Deposit $10, Get 150 Free Spins on Starburst",
+    score: 8.9,
+    locations: ["GB", "IE", "AU", "NZ"],
+    visibility: "visible",
+    createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "brand-4",
+    name: "VoltBet Sports",
+    type: "sportsbook",
+    logo: "",
+    welcomeOffer: "Bet $10, Get $200 in Free Play Credits",
+    score: 9.1,
+    locations: ["US", "GB", "IE"],
+    visibility: "visible",
+    createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "brand-5",
+    name: "HyperX Casino",
+    type: "casino",
+    logo: "",
+    welcomeOffer: "200% Welcome Bonus up to €500",
+    score: 7.8,
+    locations: ["CA", "NZ", "ZA", "IE"],
+    visibility: "hidden", // Start hidden to show UI toggle behavior
+    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    id: "brand-6",
+    name: "Elite Punter",
+    type: "sportsbook",
+    logo: "",
+    welcomeOffer: "100% First Deposit Bonus up to €200",
+    score: 8.4,
+    locations: ["DE", "FR", "IT", "ES"],
+    visibility: "visible",
+    createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+  },
+];
