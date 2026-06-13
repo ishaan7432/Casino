@@ -88,8 +88,12 @@ export default function DashboardContainer() {
         visibility: newBrandData.visibility,
       };
 
+      console.log("Attempting to add brand:", data);
+
       if (newBrandData.type === "sportsbook") {
         const result = await sportsbookOffersApi.create(data);
+        console.log("Sportsbook create result:", result);
+
         if (result.success && result.data) {
           const newBrand: Brand = {
             id: `sportsbook-${result.data.id}`,
@@ -103,9 +107,13 @@ export default function DashboardContainer() {
             createdAt: result.data.created_at || new Date().toISOString(),
           };
           setBrands([newBrand, ...brands]);
+        } else {
+          alert(`Failed to add sportsbook: ${result.error || "Unknown error"}`);
         }
       } else {
         const result = await casinoOffersApi.create(data);
+        console.log("Casino create result:", result);
+
         if (result.success && result.data) {
           const newBrand: Brand = {
             id: `casino-${result.data.id}`,
@@ -119,10 +127,13 @@ export default function DashboardContainer() {
             createdAt: result.data.created_at || new Date().toISOString(),
           };
           setBrands([newBrand, ...brands]);
+        } else {
+          alert(`Failed to add casino: ${result.error || "Unknown error"}`);
         }
       }
     } catch (error) {
       console.error("Error adding brand:", error);
+      alert(`Error adding brand: ${error instanceof Error ? error.message : "Unknown error"}`);
     }
   };
 
