@@ -27,16 +27,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load token from localStorage on mount
-  useEffect(() => {
-    const storedToken = localStorage.getItem("admin_token");
-    if (storedToken) {
-      verifyToken(storedToken);
-    } else {
-      setIsLoading(false);
-    }
-  }, []);
-
   const verifyToken = async (tokenToVerify: string) => {
     try {
       const response = await fetch(`${API_BASE_URL}/offers/auth/verify/`, {
@@ -84,6 +74,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }
   };
+
+  // Load token from localStorage on mount
+  useEffect(() => {
+    const storedToken = localStorage.getItem("admin_token");
+    const handler = setTimeout(() => {
+      if (storedToken) {
+        verifyToken(storedToken);
+      } else {
+        setIsLoading(false);
+      }
+    }, 0);
+    return () => clearTimeout(handler);
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {

@@ -58,15 +58,6 @@ export default function AddBrandModal({ onClose, onAdd, editBrand }: AddBrandMod
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Fetch sportsbooks or casinos when type changes
-  useEffect(() => {
-    if (type === "sportsbook") {
-      fetchSportsbooks();
-    } else {
-      fetchCasinos();
-    }
-  }, [type]);
-
   const fetchSportsbooks = async () => {
     setLoadingOptions(true);
     try {
@@ -90,6 +81,18 @@ export default function AddBrandModal({ onClose, onAdd, editBrand }: AddBrandMod
       setLoadingOptions(false);
     }
   };
+
+  // Fetch sportsbooks or casinos when type changes
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      if (type === "sportsbook") {
+        fetchSportsbooks();
+      } else {
+        fetchCasinos();
+      }
+    }, 0);
+    return () => clearTimeout(handler);
+  }, [type]);
 
   const handleSportsbookSelect = (sportsbook: Sportsbook) => {
     setSelectedSportsbook(sportsbook);
@@ -199,7 +202,12 @@ export default function AddBrandModal({ onClose, onAdd, editBrand }: AddBrandMod
 
   return (
     <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
+      <div
+        className={`${styles.modal} ${
+          type === "casino" ? styles.casinoTheme : styles.sportsbookTheme
+        }`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className={styles.header}>
           <h2 className={styles.title}>{isEditMode ? "Edit Offer" : "Add New Offer"}</h2>
           <button onClick={onClose} className={styles.closeBtn}>

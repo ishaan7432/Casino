@@ -1,16 +1,16 @@
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  margin-bottom: 32px;
-  animation: fadeIn 0.4s ease-out;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-bottom: 36px;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .card {
-  background: var(--bg-surface-glass);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(9, 13, 26, 0.5) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: var(--border-radius-md);
-  padding: 24px 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -37,8 +37,8 @@
 }
 
 .cardCasino:hover {
-  box-shadow: var(--accent-casino-glow), var(--glass-shadow);
-  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.15), var(--glass-shadow);
+  border-color: rgba(16, 185, 129, 0.25);
 }
 
 .cardSportsbook::before {
@@ -46,17 +46,17 @@
 }
 
 .cardSportsbook:hover {
-  box-shadow: var(--accent-sportsbook-glow), var(--glass-shadow);
-  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.15), var(--glass-shadow);
+  border-color: rgba(59, 130, 246, 0.25);
 }
 
 .cardTotal::before {
-  background: linear-gradient(90deg, #c084fc, transparent);
+  background: linear-gradient(90deg, var(--accent-primary), transparent);
 }
 
 .cardTotal:hover {
-  box-shadow: 0 0 15px rgba(192, 132, 252, 0.15), var(--glass-shadow);
-  border-color: rgba(192, 132, 252, 0.3);
+  box-shadow: 0 0 25px rgba(139, 92, 246, 0.15), var(--glass-shadow);
+  border-color: rgba(139, 92, 246, 0.25);
 }
 
 .cardAvg::before {
@@ -64,38 +64,38 @@
 }
 
 .cardAvg:hover {
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.15), var(--glass-shadow);
-  border-color: rgba(245, 158, 11, 0.3);
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.15), var(--glass-shadow);
+  border-color: rgba(245, 158, 11, 0.25);
 }
 
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
 }
 
 .label {
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .value {
-  font-size: 2.25rem;
-  font-weight: 700;
+  font-size: 2.5rem;
+  font-weight: 800;
   color: var(--text-primary);
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 .subText {
   font-size: 0.75rem;
   color: var(--text-muted);
-  margin-top: 8px;
+  margin-top: 10px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
 .indicator {
@@ -116,11 +116,12 @@
 }
 
 .indicatorTotal {
-  background-color: #c084fc;
-  box-shadow: 0 0 8px #c084fc;
+  background-color: var(--accent-primary);
+  box-shadow: 0 0 8px var(--accent-primary);
 }
 
 .indicatorAvg {
   background-color: var(--accent-warning);
   box-shadow: 0 0 8px var(--accent-warning);
 }
+

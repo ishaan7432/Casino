@@ -209,7 +209,7 @@ export const sportsbooksApi = {
     // The response already contains results at the top level
     return {
       ...response,
-      data: (response as any).results || [],
+      data: (response as unknown as { results: Sportsbook[] }).results || [],
     };
   },
 };
@@ -233,7 +233,7 @@ export const casinosApi = {
     // The response already contains results at the top level
     return {
       ...response,
-      data: (response as any).results || [],
+      data: (response as unknown as { results: Casino[] }).results || [],
     };
   },
 };

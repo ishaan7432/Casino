@@ -436,7 +436,7 @@ export default function DashboardContainer() {
             onChange={(e) => setLocationFilter(e.target.value)}
             className={styles.filterSelect}
           >
-            <option value="all">All Countries</option>
+            <option value="all">All Provinces</option>
             {allLocations.map((loc) => (
               <option key={loc} value={loc}>
                 {loc}
@@ -461,23 +461,32 @@ export default function DashboardContainer() {
           {/* Operator Category Tabs */}
           <div className={styles.tabs}>
             <button
-              onClick={() => setTypeFilter("all")}
-              className={`${styles.tab} ${typeFilter === "all" ? styles.tabActive : ""}`}
+              onClick={() => {
+                setTypeFilter("all");
+                setVisibilityFilter("all");
+              }}
+              className={`${styles.tab} ${typeFilter === "all" && visibilityFilter !== "hidden" ? styles.tabActive : ""}`}
             >
               All Types
             </button>
             <button
-              onClick={() => setTypeFilter("casino")}
+              onClick={() => {
+                setTypeFilter("casino");
+                setVisibilityFilter("all");
+              }}
               className={`${styles.tab} ${
-                typeFilter === "casino" ? styles.tabCasinoActive : ""
+                typeFilter === "casino" && visibilityFilter !== "hidden" ? styles.tabCasinoActive : ""
               }`}
             >
               Casinos
             </button>
             <button
-              onClick={() => setTypeFilter("sportsbook")}
+              onClick={() => {
+                setTypeFilter("sportsbook");
+                setVisibilityFilter("all");
+              }}
               className={`${styles.tab} ${
-                typeFilter === "sportsbook" ? styles.tabSportsbookActive : ""
+                typeFilter === "sportsbook" && visibilityFilter !== "hidden" ? styles.tabSportsbookActive : ""
               }`}
             >
               Sportsbooks

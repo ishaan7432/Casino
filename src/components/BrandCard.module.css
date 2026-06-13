@@ -1,6 +1,6 @@
 .card {
-  background: var(--bg-surface-glass);
-  border: 1px solid var(--border-color);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(9, 13, 26, 0.5) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: var(--border-radius-lg);
   padding: 24px;
   display: flex;
@@ -14,27 +14,67 @@
   height: 100%;
 }
 
+.cardCasino {
+  --card-accent: var(--accent-casino);
+  --card-accent-rgb: var(--accent-casino-rgb);
+}
+
+.cardSportsbook {
+  --card-accent: var(--accent-sportsbook);
+  --card-accent-rgb: var(--accent-sportsbook-rgb);
+}
+
 .card:hover {
-  transform: translateY(-4px);
-  border-color: var(--border-color-hover);
+  transform: translateY(-6px);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .cardCasino:hover {
-  box-shadow: var(--accent-casino-glow), var(--glass-shadow);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.12), var(--glass-shadow);
 }
 
 .cardSportsbook:hover {
-  box-shadow: var(--accent-sportsbook-glow), var(--glass-shadow);
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.12), var(--glass-shadow);
 }
 
-/* Inactive/Hidden State overlay/opacity */
+/* Inactive/Hidden State styles */
 .hiddenCard {
-  opacity: 0.65;
-  border-style: dashed;
+  opacity: 0.6;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.2) 0%, rgba(9, 13, 26, 0.35) 100%) !important;
+  border: 1px dashed rgba(244, 63, 94, 0.25) !important;
 }
 
 .hiddenCard:hover {
-  opacity: 0.85;
+  opacity: 0.9;
+  border-color: rgba(244, 63, 94, 0.45) !important;
+}
+
+.cardCasino.hiddenCard:hover,
+.cardSportsbook.hiddenCard:hover {
+  box-shadow: 0 10px 30px rgba(244, 63, 94, 0.06), var(--glass-shadow) !important;
+}
+
+/* Children styling inside hidden/inactive card */
+.hiddenCard .offerSection {
+  background: rgba(0, 0, 0, 0.35) !important;
+  border-color: rgba(244, 63, 94, 0.1) !important;
+}
+
+.hiddenCard .scoreCircle {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: var(--text-muted) !important;
+  text-shadow: none !important;
+}
+
+.hiddenCard .logoFallback {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.hiddenCard .typeBadge {
+  background: rgba(255, 255, 255, 0.03) !important;
+  color: var(--text-muted) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Header section */
@@ -56,7 +96,8 @@
   height: 52px;
   border-radius: var(--border-radius-md);
   object-fit: cover;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .logoFallback {
@@ -66,20 +107,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 1.25rem;
+  font-weight: 800;
+  font-size: 1.2rem;
   color: #ffffff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .fallbackCasino {
-  background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .fallbackSportsbook {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
@@ -88,54 +129,62 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 6px;
+  gap: 8px;
+}
+
+.typeBadgeGroup {
+  display: flex;
+  justify-content: flex-start;
+  margin-top: 6px;
 }
 
 .typeBadge {
-  font-size: 0.7rem;
-  font-weight: 700;
+  font-size: 0.65rem;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 4px 8px;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
   border-radius: 20px;
   display: inline-block;
 }
 
 .typeCasino {
-  background: rgba(16, 185, 129, 0.12);
+  background: rgba(16, 185, 129, 0.1);
   color: var(--accent-casino);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .typeSportsbook {
-  background: rgba(59, 130, 246, 0.12);
+  background: rgba(59, 130, 246, 0.1);
   color: var(--accent-sportsbook);
-  border: 1px solid rgba(59, 130, 246, 0.25);
+  border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .statusBadge {
   font-size: 0.65rem;
-  font-weight: 600;
-  padding: 3px 6px;
-  border-radius: 4px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
 .statusVisible {
-  background: rgba(16, 185, 129, 0.08);
+  background: rgba(16, 185, 129, 0.06);
   color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.15);
 }
 
 .statusHidden {
-  background: rgba(239, 68, 68, 0.08);
+  background: rgba(244, 63, 94, 0.06);
   color: #f87171;
+  border: 1px solid rgba(244, 63, 94, 0.15);
 }
 
 .pulseDot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: currentColor;
   animation: pulseGlow 2s infinite ease-in-out;
@@ -143,18 +192,18 @@
 
 /* Info Section */
 .name {
-  font-size: 1.2rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 800;
   color: var(--text-primary);
   margin-bottom: 4px;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
 }
 
 .offerSection {
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.02);
+  margin-bottom: 24px;
+  background: rgba(0, 0, 0, 0.2);
   border-radius: var(--border-radius-sm);
-  padding: 12px;
+  padding: 14px 16px;
   border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
@@ -162,15 +211,16 @@
   font-size: 0.7rem;
   text-transform: uppercase;
   color: var(--text-muted);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  margin-bottom: 4px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
 }
 
 .offerContent {
-  font-size: 0.925rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.4;
 }
 
 /* Rating / Score Row */
@@ -179,47 +229,51 @@
   justify-content: space-between;
   align-items: center;
   margin-top: auto;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .scoreContainer {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .scoreCircle {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 0.9rem;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-  background-color: rgba(255, 255, 255, 0.03);
+  font-weight: 800;
+  font-size: 0.95rem;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .scoreExcellent {
   border: 2.5px solid var(--accent-casino);
   color: var(--accent-casino);
+  text-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
 }
 
 .scoreGood {
   border: 2.5px solid var(--accent-sportsbook);
   color: var(--accent-sportsbook);
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
 }
 
 .scoreAverage {
   border: 2.5px solid var(--accent-warning);
   color: var(--accent-warning);
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
 }
 
 .scorePoor {
   border: 2.5px solid var(--accent-danger);
   color: var(--accent-danger);
+  text-shadow: 0 0 8px rgba(244, 63, 94, 0.2);
 }
 
 .scoreLabel {
@@ -242,28 +296,30 @@
 .locationsContainer {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  align-items: flex-end;
 }
 
 .locTitle {
   font-size: 0.65rem;
   text-transform: uppercase;
   color: var(--text-muted);
-  font-weight: 600;
-  letter-spacing: 0.05em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
 }
 
 .locPills {
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
-  max-width: 140px;
+  justify-content: flex-end;
+  max-width: 160px;
 }
 
 .locPill {
   font-size: 0.65rem;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.06);
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--text-secondary);
   padding: 2px 6px;
@@ -273,9 +329,9 @@
 
 .locPillMore {
   font-size: 0.65rem;
-  font-weight: 600;
-  background: rgba(var(--card-accent-rgb), 0.15);
-  border: 1px solid rgba(var(--card-accent-rgb), 0.3);
+  font-weight: 700;
+  background: rgba(var(--card-accent-rgb), 0.12);
+  border: 1px solid rgba(var(--card-accent-rgb), 0.25);
   color: var(--card-accent);
   padding: 2px 6px;
   border-radius: 4px;
@@ -284,7 +340,7 @@
 }
 
 .locPillMore:hover {
-  background: rgba(var(--card-accent-rgb), 0.25);
+  background: rgba(var(--card-accent-rgb), 0.2);
   transform: scale(1.05);
 }
 
@@ -294,15 +350,15 @@
   justify-content: flex-end;
   align-items: center;
   gap: 8px;
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .deleteBtn {
-  background: rgba(239, 68, 68, 0.1);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: rgba(244, 63, 94, 0.05);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.15);
   padding: 6px 12px;
   font-size: 0.75rem;
   font-weight: 600;
@@ -318,11 +374,11 @@
   background: var(--accent-danger);
   color: #ffffff;
   border-color: var(--accent-danger);
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.3);
 }
 
 .toggleVisibilityBtn {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   color: var(--text-secondary);
   border: 1px solid rgba(255, 255, 255, 0.08);
   padding: 6px 10px;
@@ -339,9 +395,9 @@
 }
 
 .editBtn {
-  background: rgba(139, 92, 246, 0.1);
-  color: #a78bfa;
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  background: rgba(139, 92, 246, 0.08);
+  color: #c4b5fd;
+  border: 1px solid rgba(139, 92, 246, 0.15);
   padding: 6px 12px;
   font-size: 0.75rem;
   font-weight: 600;
@@ -354,8 +410,9 @@
 }
 
 .editBtn:hover {
-  background: rgba(139, 92, 246, 0.2);
-  color: #c4b5fd;
-  border-color: rgba(139, 92, 246, 0.4);
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+  background: rgba(139, 92, 246, 0.18);
+  color: #ddd6fe;
+  border-color: rgba(139, 92, 246, 0.3);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
 }
+

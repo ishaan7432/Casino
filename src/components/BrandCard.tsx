@@ -87,7 +87,7 @@ export default function BrandCard({
           )}
           <div>
             <h3 className={styles.name}>{brand.name}</h3>
-            <div className={styles.badgeGroup}>
+            <div className={styles.typeBadgeGroup}>
               <span
                 className={`${styles.typeBadge} ${
                   brand.type === "casino"

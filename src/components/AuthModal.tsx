@@ -35,7 +35,7 @@ export default function AuthModal() {
       if (!result.success) {
         setError(result.error || "Authentication failed");
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);

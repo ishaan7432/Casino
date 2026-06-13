@@ -1,32 +1,39 @@
 :root {
-  --bg-dark: #070a13;
-  --bg-surface: #121824;
-  --bg-surface-glass: rgba(18, 24, 36, 0.65);
-  --border-color: rgba(255, 255, 255, 0.08);
-  --border-color-hover: rgba(255, 255, 255, 0.18);
+  --bg-dark: #030712;
+  --bg-surface: #090d16;
+  --bg-surface-glass: rgba(9, 13, 22, 0.65);
+  --border-color: rgba(255, 255, 255, 0.05);
+  --border-color-hover: rgba(255, 255, 255, 0.12);
   
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
   
+  /* Admin primary actions (violet/indigo theme) */
+  --accent-primary: #8b5cf6;
+  --accent-primary-rgb: 139, 92, 246;
+  --accent-primary-glow: 0 0 20px rgba(139, 92, 246, 0.35);
+  
+  /* Casino (vibrant emerald green) */
   --accent-casino: #10b981;
   --accent-casino-rgb: 16, 185, 129;
-  --accent-casino-glow: 0 0 15px rgba(16, 185, 129, 0.25);
+  --accent-casino-glow: 0 0 20px rgba(16, 185, 129, 0.35);
   
+  /* Sportsbook (electric blue) */
   --accent-sportsbook: #3b82f6;
   --accent-sportsbook-rgb: 59, 130, 246;
-  --accent-sportsbook-glow: 0 0 15px rgba(59, 130, 246, 0.25);
+  --accent-sportsbook-glow: 0 0 20px rgba(59, 130, 246, 0.35);
   
-  --accent-danger: #ef4444;
-  --accent-danger-rgb: 239, 68, 68;
+  --accent-danger: #f43f5e;
+  --accent-danger-rgb: 244, 63, 94;
   --accent-warning: #f59e0b;
   
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-  --glass-blur: blur(12px);
-  --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --glass-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.65), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  --glass-blur: blur(16px);
+  --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   --border-radius-sm: 8px;
   --border-radius-md: 14px;
-  --border-radius-lg: 20px;
+  --border-radius-lg: 24px;
 }
 
 * {
@@ -44,8 +51,9 @@ body {
   min-height: 100%;
   background-color: var(--bg-dark);
   background-image: 
-    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.06) 0px, transparent 50%);
+    radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
   background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -57,8 +65,8 @@ body {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
@@ -66,19 +74,20 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid var(--bg-dark);
+  border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.15);
 }
 
 /* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -89,7 +98,7 @@ body {
 @keyframes scaleUp {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.96);
   }
   to {
     opacity: 1;
@@ -99,7 +108,7 @@ body {
 
 @keyframes pulseGlow {
   0%, 100% {
-    opacity: 0.6;
+    opacity: 0.5;
   }
   50% {
     opacity: 1;
@@ -118,4 +127,5 @@ body {
 input, select, textarea {
   font-family: inherit;
 }
+
 
