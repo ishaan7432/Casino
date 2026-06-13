@@ -46,7 +46,7 @@ export default function StatsHeader({ brands }: StatsHeaderProps) {
         </div>
         <div className={styles.subText}>
           <span className={`${styles.indicator} ${styles.indicatorCasino}`} />
-          Live & visible on frontend
+          Live & Active Casinos
         </div>
       </div>
 
@@ -57,7 +57,7 @@ export default function StatsHeader({ brands }: StatsHeaderProps) {
         </div>
         <div className={styles.subText}>
           <span className={`${styles.indicator} ${styles.indicatorSportsbook}`} />
-          Live & visible on frontend
+          Live & Active Sportsbooks
         </div>
       </div>
 

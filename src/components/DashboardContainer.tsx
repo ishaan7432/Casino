@@ -326,7 +326,7 @@ export default function DashboardContainer() {
       <div className={styles.container}>
         <div className={styles.pageHeader}>
           <div className={styles.titleArea}>
-            <h1 className={styles.title}>BetVault Admin</h1>
+            <h1 className={styles.title}>OfferStakes Admin</h1>
             <span className={styles.subtitle}>Loading...</span>
           </div>
         </div>
@@ -344,7 +344,7 @@ export default function DashboardContainer() {
       <div className={styles.container}>
         <div className={styles.pageHeader}>
           <div className={styles.titleArea}>
-            <h1 className={styles.title}>BetVault Admin</h1>
+            <h1 className={styles.title}>OfferStakes Admin</h1>
             <span className={styles.subtitle}>Loading operators from database...</span>
           </div>
         </div>
@@ -357,7 +357,7 @@ export default function DashboardContainer() {
       {/* Header Area */}
       <div className={styles.pageHeader}>
         <div className={styles.titleArea}>
-          <h1 className={styles.title}>BetVault Admin</h1>
+          <h1 className={styles.title}>OfferStakes Admin</h1>
           <span className={styles.subtitle}>
             Welcome, {user.name} | Manage casino and sportsbook operators
           </span>

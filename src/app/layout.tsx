@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BetVault | Casino & Sportsbook Admin Dashboard",
+  title: "OfferStakes | Casino & Sportsbook Admin Dashboard",
   description: "A premium glassmorphic operator management dashboard built with Next.js.",
 };
 
