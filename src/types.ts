@@ -6,6 +6,6 @@ export interface Brand {
   welcomeOffer: string;
   score: number; // 0.0 to 10.0
   locations: string[]; // E.g., ["US", "CA", "UK"]
-  visibility: "visible" | "hidden";
+  visibility: boolean; // true = visible, false = hidden
   createdAt: string;
 }

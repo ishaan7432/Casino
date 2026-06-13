@@ -35,6 +35,12 @@
   margin-top: 4px;
 }
 
+.headerActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 .addBtn {
   background: linear-gradient(135deg, var(--accent-casino) 0%, #059669 100%);
   color: #ffffff;
@@ -58,6 +64,32 @@
 
 .addBtn:active {
   transform: translateY(1px);
+}
+
+.logoutBtn {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 20px;
+  border-radius: var(--border-radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-smooth);
+}
+
+.logoutBtn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  transform: translateY(-1px);
+}
+
+.logoutBtn:active {
+  transform: translateY(0px);
 }
 
 /* Controls Panel: Search & Filters */

@@ -9,7 +9,7 @@ export const INITIAL_BRANDS: Brand[] = [
     welcomeOffer: "100% Match up to $1,500 + 200 Free Spins",
     score: 9.8,
     locations: ["US", "CA", "GB"],
-    visibility: "visible",
+    visibility: true,
     createdAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -20,7 +20,7 @@ export const INITIAL_BRANDS: Brand[] = [
     welcomeOffer: "Risk-Free First Bet up to $500",
     score: 9.5,
     locations: ["US", "CA", "DE", "AT"],
-    visibility: "visible",
+    visibility: true,
     createdAt: new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -31,7 +31,7 @@ export const INITIAL_BRANDS: Brand[] = [
     welcomeOffer: "Deposit $10, Get 150 Free Spins on Starburst",
     score: 8.9,
     locations: ["GB", "IE", "AU", "NZ"],
-    visibility: "visible",
+    visibility: true,
     createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -42,7 +42,7 @@ export const INITIAL_BRANDS: Brand[] = [
     welcomeOffer: "Bet $10, Get $200 in Free Play Credits",
     score: 9.1,
     locations: ["US", "GB", "IE"],
-    visibility: "visible",
+    visibility: true,
     createdAt: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -53,7 +53,7 @@ export const INITIAL_BRANDS: Brand[] = [
     welcomeOffer: "200% Welcome Bonus up to €500",
     score: 7.8,
     locations: ["CA", "NZ", "ZA", "IE"],
-    visibility: "hidden", // Start hidden to show UI toggle behavior
+    visibility: false, // Start hidden to show UI toggle behavior
     createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
   },
   {
@@ -64,7 +64,7 @@ export const INITIAL_BRANDS: Brand[] = [
     welcomeOffer: "100% First Deposit Bonus up to €200",
     score: 8.4,
     locations: ["DE", "FR", "IT", "ES"],
-    visibility: "visible",
+    visibility: true,
     createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
   },
 ];

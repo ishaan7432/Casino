@@ -271,11 +271,29 @@
   text-transform: uppercase;
 }
 
+.locPillMore {
+  font-size: 0.65rem;
+  font-weight: 600;
+  background: rgba(var(--card-accent-rgb), 0.15);
+  border: 1px solid rgba(var(--card-accent-rgb), 0.3);
+  color: var(--card-accent);
+  padding: 2px 6px;
+  border-radius: 4px;
+  cursor: help;
+  transition: var(--transition-smooth);
+}
+
+.locPillMore:hover {
+  background: rgba(var(--card-accent-rgb), 0.25);
+  transform: scale(1.05);
+}
+
 /* Actions */
 .cardFooter {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
+  gap: 8px;
   margin-top: 16px;
   padding-top: 12px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
@@ -318,4 +336,26 @@
 .toggleVisibilityBtn:hover {
   background: rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
+}
+
+.editBtn {
+  background: rgba(139, 92, 246, 0.1);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition-smooth);
+}
+
+.editBtn:hover {
+  background: rgba(139, 92, 246, 0.2);
+  color: #c4b5fd;
+  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
 }

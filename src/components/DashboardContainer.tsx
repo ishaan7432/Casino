@@ -2,15 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import { Brand } from "../types";
-import { INITIAL_BRANDS } from "../mockData";
+import { sportsbookOffersApi, casinoOffersApi, SportsbookOffer, CasinoOffer } from "../lib/api";
+import { useAuth } from "../contexts/AuthContext";
 import StatsHeader from "./StatsHeader";
 import BrandCard from "./BrandCard";
 import AddBrandModal from "./AddBrandModal";
+import AuthModal from "./AuthModal";
 import styles from "./DashboardContainer.module.css";
 
 export default function DashboardContainer() {
-  const [brands, setBrands] = useState<Brand[]>(INITIAL_BRANDS);
+  const { user, token, logout, isLoading: authLoading } = useAuth();
+  const [brands, setBrands] = useState<Brand[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Filter States
   const [searchQuery, setSearchQuery] = useState("");
@@ -21,58 +25,218 @@ export default function DashboardContainer() {
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
 
-  // Sync with LocalStorage on Mount (Client Only)
+  // Fetch brands from backend API on mount
   useEffect(() => {
-    const stored = localStorage.getItem("betvault_brands");
-    
-    const timer = setTimeout(() => {
-      if (stored) {
-        try {
-          setBrands(JSON.parse(stored));
-        } catch (e) {
-          console.error("Error loading brands from storage:", e);
-        }
+    const fetchBrands = async () => {
+      try {
+        setIsLoading(true);
+
+        // Fetch both sportsbooks and casinos in parallel
+        const [sportsbooksRes, casinosRes] = await Promise.all([
+          sportsbookOffersApi.list(),
+          casinoOffersApi.list()
+        ]);
+
+        // Convert to Brand format with prefixed IDs to avoid duplicates
+        const sportsbooks: Brand[] = (sportsbooksRes.data || []).map((sb: SportsbookOffer) => ({
+          id: `sportsbook-${sb.id}`,
+          name: sb.name,
+          type: "sportsbook" as const,
+          logo: sb.logo || "",
+          welcomeOffer: sb.welcome_offer || "",
+          score: Number(sb.score),
+          locations: sb.locations || [],
+          visibility: Boolean(sb.visibility),
+          createdAt: sb.created_at || new Date().toISOString(),
+        }));
+
+        const casinos: Brand[] = (casinosRes.data || []).map((c: CasinoOffer) => ({
+          id: `casino-${c.id}`,
+          name: c.name,
+          type: "casino" as const,
+          logo: c.logo || "",
+          welcomeOffer: c.welcome_offer || "",
+          score: Number(c.score),
+          locations: c.locations || [],
+          visibility: Boolean(c.visibility),
+          createdAt: c.created_at || new Date().toISOString(),
+        }));
+
+        setBrands([...sportsbooks, ...casinos]);
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      } finally {
+        setIsLoading(false);
+        setIsMounted(true);
       }
-      setIsMounted(true);
-    }, 0);
-    
-    return () => clearTimeout(timer);
+    };
+
+    fetchBrands();
   }, []);
 
-  const saveBrands = (updatedBrands: Brand[]) => {
-    setBrands(updatedBrands);
-    localStorage.setItem("betvault_brands", JSON.stringify(updatedBrands));
-  };
-
   // Add Brand
-  const handleAddBrand = (newBrandData: Omit<Brand, "id" | "createdAt">) => {
-    const newBrand: Brand = {
-      ...newBrandData,
-      id: `brand-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-    };
-    const updated = [newBrand, ...brands];
-    saveBrands(updated);
+  const handleAddBrand = async (newBrandData: Omit<Brand, "id" | "createdAt">) => {
+    try {
+      const data = {
+        name: newBrandData.name,
+        logo: newBrandData.logo,
+        welcome_offer: newBrandData.welcomeOffer,
+        score: newBrandData.score,
+        locations: newBrandData.locations,
+        visibility: newBrandData.visibility,
+      };
+
+      if (newBrandData.type === "sportsbook") {
+        const result = await sportsbookOffersApi.create(data);
+        if (result.success && result.data) {
+          const newBrand: Brand = {
+            id: `sportsbook-${result.data.id}`,
+            name: result.data.name,
+            type: "sportsbook",
+            logo: result.data.logo || "",
+            welcomeOffer: result.data.welcome_offer || "",
+            score: Number(result.data.score),
+            locations: result.data.locations || [],
+            visibility: Boolean(result.data.visibility),
+            createdAt: result.data.created_at || new Date().toISOString(),
+          };
+          setBrands([newBrand, ...brands]);
+        }
+      } else {
+        const result = await casinoOffersApi.create(data);
+        if (result.success && result.data) {
+          const newBrand: Brand = {
+            id: `casino-${result.data.id}`,
+            name: result.data.name,
+            type: "casino",
+            logo: result.data.logo || "",
+            welcomeOffer: result.data.welcome_offer || "",
+            score: Number(result.data.score),
+            locations: result.data.locations || [],
+            visibility: Boolean(result.data.visibility),
+            createdAt: result.data.created_at || new Date().toISOString(),
+          };
+          setBrands([newBrand, ...brands]);
+        }
+      }
+    } catch (error) {
+      console.error("Error adding brand:", error);
+    }
   };
 
   // Delete Brand
-  const handleDeleteBrand = (id: string) => {
-    const updated = brands.filter((brand) => brand.id !== id);
-    saveBrands(updated);
+  const handleDeleteBrand = async (id: string) => {
+    try {
+      const brand = brands.find(b => b.id === id);
+      if (!brand) return;
+
+      // Extract numeric ID from prefixed ID (e.g., "sportsbook-2" -> 2)
+      const numericId = Number(id.split('-')[1]);
+
+      if (brand.type === "sportsbook") {
+        await sportsbookOffersApi.delete(numericId);
+      } else {
+        await casinoOffersApi.delete(numericId);
+      }
+
+      setBrands(brands.filter((b) => b.id !== id));
+    } catch (error) {
+      console.error("Error deleting brand:", error);
+    }
   };
 
   // Toggle Visibility
-  const handleToggleVisibility = (id: string) => {
-    const updated = brands.map((brand) =>
-      brand.id === id
-        ? {
-            ...brand,
-            visibility: (brand.visibility === "visible" ? "hidden" : "visible") as "visible" | "hidden",
-          }
-        : brand
-    );
-    saveBrands(updated);
+  const handleToggleVisibility = async (id: string) => {
+    try {
+      const brand = brands.find(b => b.id === id);
+      if (!brand) return;
+
+      // Extract numeric ID from prefixed ID (e.g., "sportsbook-2" -> 2)
+      const numericId = Number(id.split('-')[1]);
+      const newVisibility = !brand.visibility;
+
+      if (brand.type === "sportsbook") {
+        await sportsbookOffersApi.update(numericId, { visibility: newVisibility });
+      } else {
+        await casinoOffersApi.update(numericId, { visibility: newVisibility });
+      }
+
+      setBrands(brands.map((b) =>
+        b.id === id ? { ...b, visibility: newVisibility } : b
+      ));
+    } catch (error) {
+      console.error("Error toggling visibility:", error);
+    }
+  };
+
+  // Edit Brand
+  const handleEditBrand = (id: string) => {
+    const brand = brands.find(b => b.id === id);
+    if (brand) {
+      setEditingBrand(brand);
+      setIsModalOpen(true);
+    }
+  };
+
+  // Update Brand
+  const handleUpdateBrand = async (updatedBrandData: Omit<Brand, "id" | "createdAt">) => {
+    if (!editingBrand) return;
+
+    try {
+      const numericId = Number(editingBrand.id.split('-')[1]);
+      const data = {
+        name: updatedBrandData.name,
+        logo: updatedBrandData.logo,
+        welcome_offer: updatedBrandData.welcomeOffer,
+        score: updatedBrandData.score,
+        locations: updatedBrandData.locations,
+        visibility: updatedBrandData.visibility,
+      };
+
+      if (editingBrand.type === "sportsbook") {
+        const result = await sportsbookOffersApi.update(numericId, data);
+        if (result.success && result.data) {
+          const updatedData = result.data;
+          setBrands(brands.map(b =>
+            b.id === editingBrand.id
+              ? {
+                  ...b,
+                  name: updatedData.name,
+                  logo: updatedData.logo || "",
+                  welcomeOffer: updatedData.welcome_offer || "",
+                  score: Number(updatedData.score),
+                  locations: updatedData.locations || [],
+                  visibility: Boolean(updatedData.visibility),
+                }
+              : b
+          ));
+        }
+      } else {
+        const result = await casinoOffersApi.update(numericId, data);
+        if (result.success && result.data) {
+          const updatedData = result.data;
+          setBrands(brands.map(b =>
+            b.id === editingBrand.id
+              ? {
+                  ...b,
+                  name: updatedData.name,
+                  logo: updatedData.logo || "",
+                  welcomeOffer: updatedData.welcome_offer || "",
+                  score: Number(updatedData.score),
+                  locations: updatedData.locations || [],
+                  visibility: Boolean(updatedData.visibility),
+                }
+              : b
+          ));
+        }
+      }
+
+      setEditingBrand(null);
+    } catch (error) {
+      console.error("Error updating brand:", error);
+    }
   };
 
   // Reset all search and filters
@@ -119,8 +283,10 @@ export default function DashboardContainer() {
     }
 
     // 4. Visibility Filter
-    if (visibilityFilter !== "all") {
-      result = result.filter((b) => b.visibility === visibilityFilter);
+    if (visibilityFilter === "visible") {
+      result = result.filter((b) => b.visibility === true);
+    } else if (visibilityFilter === "hidden") {
+      result = result.filter((b) => b.visibility === false);
     }
 
     // 5. Sorting
@@ -143,14 +309,32 @@ export default function DashboardContainer() {
     return result;
   }, [brands, searchQuery, typeFilter, locationFilter, visibilityFilter, sortBy]);
 
-  // Hydration safeguard: Render layout skeleton during server build/initial hydration
-  if (!isMounted) {
+  // Show auth modal if not logged in
+  if (authLoading) {
     return (
       <div className={styles.container}>
         <div className={styles.pageHeader}>
           <div className={styles.titleArea}>
             <h1 className={styles.title}>BetVault Admin</h1>
-            <span className={styles.subtitle}>Loading dashboard metrics...</span>
+            <span className={styles.subtitle}>Loading...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || !token) {
+    return <AuthModal />;
+  }
+
+  // Hydration safeguard: Render layout skeleton during server build/initial hydration
+  if (!isMounted || isLoading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.pageHeader}>
+          <div className={styles.titleArea}>
+            <h1 className={styles.title}>BetVault Admin</h1>
+            <span className={styles.subtitle}>Loading operators from database...</span>
           </div>
         </div>
       </div>
@@ -164,25 +348,44 @@ export default function DashboardContainer() {
         <div className={styles.titleArea}>
           <h1 className={styles.title}>BetVault Admin</h1>
           <span className={styles.subtitle}>
-            Manage, filter, and track casino and sportsbook operators
+            Welcome, {user.name} | Manage casino and sportsbook operators
           </span>
         </div>
-        <button className={styles.addBtn} onClick={() => setIsModalOpen(true)}>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Add Operator
-        </button>
+        <div className={styles.headerActions}>
+          <button className={styles.addBtn} onClick={() => setIsModalOpen(true)}>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Offer
+          </button>
+          <button className={styles.logoutBtn} onClick={logout}>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Logout
+          </button>
+        </div>
       </div>
 
       {/* Statistics Header Widgets */}
@@ -222,10 +425,10 @@ export default function DashboardContainer() {
             onChange={(e) => setLocationFilter(e.target.value)}
             className={styles.filterSelect}
           >
-            <option value="all">🌍 All Countries</option>
+            <option value="all">All Countries</option>
             {allLocations.map((loc) => (
               <option key={loc} value={loc}>
-                📍 {loc}
+                {loc}
               </option>
             ))}
           </select>
@@ -236,9 +439,9 @@ export default function DashboardContainer() {
             onChange={(e) => setVisibilityFilter(e.target.value as "all" | "visible" | "hidden")}
             className={styles.filterSelect}
           >
-            <option value="all">👁️ All Statuses</option>
-            <option value="visible">🟢 Visible Only</option>
-            <option value="hidden">🔴 Hidden Only</option>
+            <option value="all">All Statuses</option>
+            <option value="visible">Visible Only</option>
+            <option value="hidden">Hidden Only</option>
           </select>
         </div>
 
@@ -258,7 +461,7 @@ export default function DashboardContainer() {
                 typeFilter === "casino" ? styles.tabCasinoActive : ""
               }`}
             >
-              🎰 Casinos
+              Casinos
             </button>
             <button
               onClick={() => setTypeFilter("sportsbook")}
@@ -266,7 +469,18 @@ export default function DashboardContainer() {
                 typeFilter === "sportsbook" ? styles.tabSportsbookActive : ""
               }`}
             >
-              ⚽ Sportsbooks
+              Sportsbooks
+            </button>
+            <button
+              onClick={() => {
+                setTypeFilter("all");
+                setVisibilityFilter("hidden");
+              }}
+              className={`${styles.tab} ${
+                visibilityFilter === "hidden" ? styles.tabActive : ""
+              }`}
+            >
+              Hidden
             </button>
           </div>
 
@@ -279,11 +493,11 @@ export default function DashboardContainer() {
               className={styles.filterSelect}
               style={{ padding: "8px 12px", minWidth: "160px" }}
             >
-              <option value="rating-desc">⭐ Rating: High to Low</option>
-              <option value="rating-asc">⭐ Rating: Low to High</option>
-              <option value="name-asc">🔤 Name: A to Z</option>
-              <option value="name-desc">🔤 Name: Z to A</option>
-              <option value="date-desc">📅 Date Added: Newest</option>
+              <option value="rating-desc">Rating: High to Low</option>
+              <option value="rating-asc">Rating: Low to High</option>
+              <option value="name-asc">Name: A to Z</option>
+              <option value="name-desc">Name: Z to A</option>
+              <option value="date-desc">Date Added: Newest</option>
             </select>
           </div>
         </div>
@@ -298,6 +512,7 @@ export default function DashboardContainer() {
               brand={brand}
               onDelete={handleDeleteBrand}
               onToggleVisibility={handleToggleVisibility}
+              onEdit={handleEditBrand}
             />
           ))}
         </div>
@@ -319,7 +534,7 @@ export default function DashboardContainer() {
             <line x1="21" y1="21" x2="16.65" y2="16.65" />
             <line x1="8" y1="11" x2="14" y2="11" />
           </svg>
-          <h3 className={styles.emptyTitle}>No Operators Found</h3>
+          <h3 className={styles.emptyTitle}>No Offers Found</h3>
           <p className={styles.emptyDesc}>
             We couldn&apos;t find any casinos or sportsbooks matching your active search filters or
             selected location. Try widening your criteria.
@@ -330,9 +545,16 @@ export default function DashboardContainer() {
         </div>
       )}
 
-      {/* Add Operator Modal */}
+      {/* Add/Edit Operator Modal */}
       {isModalOpen && (
-        <AddBrandModal onClose={() => setIsModalOpen(false)} onAdd={handleAddBrand} />
+        <AddBrandModal
+          onClose={() => {
+            setIsModalOpen(false);
+            setEditingBrand(null);
+          }}
+          onAdd={editingBrand ? handleUpdateBrand : handleAddBrand}
+          editBrand={editingBrand}
+        />
       )}
     </div>
   );

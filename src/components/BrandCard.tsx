@@ -8,12 +8,14 @@ interface BrandCardProps {
   brand: Brand;
   onDelete: (id: string) => void;
   onToggleVisibility: (id: string) => void;
+  onEdit: (id: string) => void;
 }
 
 export default function BrandCard({
   brand,
   onDelete,
   onToggleVisibility,
+  onEdit,
 }: BrandCardProps) {
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -26,21 +28,21 @@ export default function BrandCard({
     return name.slice(0, 2).toUpperCase();
   };
 
-  // Determine rating style and label
-  const getRatingMeta = (score: number) => {
+  // Determine rating style
+  const getRatingClass = (score: number) => {
     if (score >= 9.0) {
-      return { class: styles.scoreExcellent, label: "Excellent" };
+      return styles.scoreExcellent;
     } else if (score >= 8.0) {
-      return { class: styles.scoreGood, label: "Very Good" };
+      return styles.scoreGood;
     } else if (score >= 7.0) {
-      return { class: styles.scoreAverage, label: "Good" };
+      return styles.scoreAverage;
     } else {
-      return { class: styles.scorePoor, label: "Average" };
+      return styles.scorePoor;
     }
   };
 
-  const ratingMeta = getRatingMeta(brand.score);
-  const isHidden = brand.visibility === "hidden";
+  const ratingClass = getRatingClass(brand.score);
+  const isHidden = !brand.visibility;
 
   const handleDeleteClick = () => {
     if (isDeleting) {
@@ -121,12 +123,11 @@ export default function BrandCard({
       <div className={styles.detailsRow}>
         {/* Rating Score */}
         <div className={styles.scoreContainer}>
-          <div className={`${styles.scoreCircle} ${ratingMeta.class}`}>
+          <div className={`${styles.scoreCircle} ${ratingClass}`}>
             {brand.score.toFixed(1)}
           </div>
           <div className={styles.scoreLabel}>
             <span className={styles.scoreVal}>{brand.score.toFixed(1)} Rating</span>
-            <span className={styles.scoreText}>{ratingMeta.label}</span>
           </div>
         </div>
 
@@ -134,11 +135,19 @@ export default function BrandCard({
         <div className={styles.locationsContainer}>
           <div className={styles.locTitle}>Locations</div>
           <div className={styles.locPills}>
-            {brand.locations.map((loc) => (
-              <span key={loc} className={styles.locPill}>
+            {brand.locations.slice(0, 3).map((loc, index) => (
+              <span key={`${loc}-${index}`} className={styles.locPill}>
                 {loc}
               </span>
             ))}
+            {brand.locations.length > 3 && (
+              <span
+                className={styles.locPillMore}
+                title={brand.locations.slice(3).join(', ')}
+              >
+                +{brand.locations.length - 3} more
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -146,9 +155,30 @@ export default function BrandCard({
       {/* Card Footer Actions */}
       <div className={styles.cardFooter}>
         <button
+          onClick={() => onEdit(brand.id)}
+          className={styles.editBtn}
+          title="Edit"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+          Edit
+        </button>
+
+        <button
           onClick={() => onToggleVisibility(brand.id)}
           className={styles.toggleVisibilityBtn}
-          title={isHidden ? "Show on frontend" : "Hide from frontend"}
+          title={isHidden ? "Show" : "Hide"}
         >
           {isHidden ? (
             <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>

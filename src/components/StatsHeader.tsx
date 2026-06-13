@@ -12,11 +12,11 @@ export default function StatsHeader({ brands }: StatsHeaderProps) {
   const totalBrands = brands.length;
   
   const activeCasinos = brands.filter(
-    (b) => b.type === "casino" && b.visibility === "visible"
+    (b) => b.type === "casino" && b.visibility === true
   ).length;
-  
+
   const activeSportsbooks = brands.filter(
-    (b) => b.type === "sportsbook" && b.visibility === "visible"
+    (b) => b.type === "sportsbook" && b.visibility === true
   ).length;
 
   const totalCasinos = brands.filter((b) => b.type === "casino").length;
@@ -30,7 +30,7 @@ export default function StatsHeader({ brands }: StatsHeaderProps) {
     <div className={styles.grid}>
       <div className={`${styles.card} ${styles.cardTotal}`}>
         <div>
-          <div className={styles.label}>Total Brands</div>
+          <div className={styles.label}>Total Offers</div>
           <div className={styles.value}>{totalBrands}</div>
         </div>
         <div className={styles.subText}>
