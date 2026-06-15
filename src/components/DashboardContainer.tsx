@@ -315,7 +315,7 @@ export default function DashboardContainer() {
       <div className={styles.container}>
         <div className={styles.pageHeader}>
           <div className={styles.titleArea}>
-            <h1 className={styles.title}>SharpStakes Admin</h1>
+            <h1 className={styles.title}>PropsLogic Admin</h1>
             <span className={styles.subtitle}>Loading...</span>
           </div>
         </div>
@@ -332,7 +332,7 @@ export default function DashboardContainer() {
       <div className={styles.container}>
         <div className={styles.pageHeader}>
           <div className={styles.titleArea}>
-            <h1 className={styles.title}>SharpStakes Admin</h1>
+            <h1 className={styles.title}>PropsLogic Admin</h1>
             <span className={styles.subtitle}>Loading from database...</span>
           </div>
         </div>
@@ -344,7 +344,7 @@ export default function DashboardContainer() {
     <div className={styles.container}>
       <div className={styles.pageHeader}>
         <div className={styles.titleArea}>
-          <h1 className={styles.title}>SharpStakes Admin</h1>
+          <h1 className={styles.title}>PropsLogic Admin</h1>
           <span className={styles.subtitle}>
             Welcome, {user.name} | Manage sportsbooks and casinos
           </span>
