@@ -298,3 +298,39 @@
   border-color: rgba(255, 255, 255, 0.15);
 }
 
+/* Main section tab switcher (Offers / Locations) */
+.mainTabs {
+  display: flex;
+  gap: 4px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 12px;
+  padding: 4px;
+  width: fit-content;
+  margin-bottom: 8px;
+}
+
+.mainTab {
+  padding: 9px 22px;
+  border: none;
+  border-radius: 9px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  letter-spacing: 0.01em;
+}
+
+.mainTab:hover {
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.mainTabActive {
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--text-primary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+

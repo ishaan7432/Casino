@@ -16,21 +16,16 @@ interface ApiResponse<T> {
   errors?: Record<string, string[]>;
 }
 
-// Generic API request helper
 async function apiRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<ApiResponse<T>> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  const defaultHeaders: HeadersInit = {
-    "Content-Type": "application/json",
-  };
-
   const config: RequestInit = {
     ...options,
     headers: {
-      ...defaultHeaders,
+      "Content-Type": "application/json",
       ...options.headers,
     },
   };
@@ -38,9 +33,7 @@ async function apiRequest<T>(
   try {
     const response = await fetch(url, config);
 
-    // Check if response is ok before parsing
     if (!response.ok) {
-      // Try to parse error as JSON, fallback to text
       let errorMessage = `Request failed with status ${response.status}`;
       try {
         const errorData = await response.json();
@@ -49,26 +42,15 @@ async function apiRequest<T>(
         const errorText = await response.text();
         errorMessage = errorText || errorMessage;
       }
-
-      return {
-        success: false,
-        error: errorMessage,
-      };
+      return { success: false, error: errorMessage };
     }
 
-    // Parse successful response
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
       const data = await response.json();
       return data;
-    } else {
-      // Non-JSON response
-      const text = await response.text();
-      return {
-        success: false,
-        error: `Unexpected response format: ${text.substring(0, 100)}`,
-      };
     }
+    return { success: false, error: "Unexpected response format" };
   } catch (error) {
     console.error("API Request Error:", error);
     return {
@@ -78,166 +60,154 @@ async function apiRequest<T>(
   }
 }
 
-// ==================== Sportsbook Offers ====================
-
-export interface SportsbookOffer {
-  id: number;
-  name: string;
-  logo: string | null;
-  welcome_offer: string | null;
-  score: number;
-  locations: string[];
-  visibility: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export const sportsbookOffersApi = {
-  // List all sportsbooks
-  list: async (params?: { visibility?: string; search?: string }) => {
-    const queryParams = new URLSearchParams();
-    if (params?.visibility) queryParams.append("visibility", params.visibility);
-    if (params?.search) queryParams.append("search", params.search);
-
-    const query = queryParams.toString();
-    return apiRequest<SportsbookOffer[]>(
-      `/offers/sportsbooks/${query ? `?${query}` : ""}`
-    );
-  },
-
-  // Get single sportsbook
-  get: async (id: number) => {
-    return apiRequest<SportsbookOffer>(`/offers/sportsbooks/${id}/`);
-  },
-
-  // Create sportsbook
-  create: async (data: Omit<SportsbookOffer, "id" | "created_at" | "updated_at">) => {
-    return apiRequest<SportsbookOffer>("/offers/sportsbooks/create/", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
-
-  // Update sportsbook
-  update: async (id: number, data: Partial<SportsbookOffer>) => {
-    return apiRequest<SportsbookOffer>(`/offers/sportsbooks/${id}/update/`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-  },
-
-  // Delete sportsbook
-  delete: async (id: number) => {
-    return apiRequest<void>(`/offers/sportsbooks/${id}/delete/`, {
-      method: "DELETE",
-    });
-  },
-};
-
-// ==================== Casino Offers ====================
-
-export interface CasinoOffer {
-  id: number;
-  name: string;
-  logo: string | null;
-  welcome_offer: string | null;
-  score: number;
-  locations: string[];
-  visibility: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export const casinoOffersApi = {
-  // List all casinos
-  list: async (params?: { visibility?: string; search?: string }) => {
-    const queryParams = new URLSearchParams();
-    if (params?.visibility) queryParams.append("visibility", params.visibility);
-    if (params?.search) queryParams.append("search", params.search);
-
-    const query = queryParams.toString();
-    return apiRequest<CasinoOffer[]>(
-      `/offers/casinos/${query ? `?${query}` : ""}`
-    );
-  },
-
-  // Get single casino
-  get: async (id: number) => {
-    return apiRequest<CasinoOffer>(`/offers/casinos/${id}/`);
-  },
-
-  // Create casino
-  create: async (data: Omit<CasinoOffer, "id" | "created_at" | "updated_at">) => {
-    return apiRequest<CasinoOffer>("/offers/casinos/create/", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
-
-  // Update casino
-  update: async (id: number, data: Partial<CasinoOffer>) => {
-    return apiRequest<CasinoOffer>(`/offers/casinos/${id}/update/`, {
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-  },
-
-  // Delete casino
-  delete: async (id: number) => {
-    return apiRequest<void>(`/offers/casinos/${id}/delete/`, {
-      method: "DELETE",
-    });
-  },
-};
-
-// ==================== Sportsbooks Table (for logo selection) ====================
+// ==================== Sportsbooks (main table) ====================
 
 export interface Sportsbook {
-  id: number | string;
+  id: number;
+  sportsbook_id: string | null;
   sportsbook_name: string;
-  square_logo_url: string | null;
+  display_name: string | null;
+  player_trend_display: string | null;
+  api_response: string | null;
+  link: string;
   logo_url: string | null;
+  square_logo_url: string | null;
+  promo_code: string | null;
+  min_deposit: string | null;
+  bg_color: string | null;
   list_of_locations: string[] | null;
+  hidden: boolean;
+  display_order: number;
 }
 
-export const sportsbooksApi = {
-  // List all sportsbooks from main table for logo selection
-  list: async () => {
-    const response = await apiRequest<{ success: boolean; count: number; results: Sportsbook[] }>(
-      "/offers/sportsbooks/list/"
-    );
-    // The response already contains results at the top level
-    return {
-      ...response,
-      data: (response as unknown as { results: Sportsbook[] }).results || [],
-    };
+export const sportsbooksAdminApi = {
+  list: async (params?: { search?: string; hidden?: boolean }) => {
+    const q = new URLSearchParams();
+    if (params?.search) q.append("search", params.search);
+    if (params?.hidden !== undefined) q.append("hidden", String(params.hidden));
+    const qs = q.toString();
+    return apiRequest<Sportsbook[]>(`/admin/sportsbooks/${qs ? `?${qs}` : ""}`);
   },
+
+  get: async (id: number) => apiRequest<Sportsbook>(`/admin/sportsbooks/${id}/`),
+
+  create: async (data: Omit<Sportsbook, "id">) =>
+    apiRequest<Sportsbook>("/admin/sportsbooks/create/", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  update: async (id: number, data: Partial<Sportsbook>) =>
+    apiRequest<Sportsbook>(`/admin/sportsbooks/${id}/update/`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  delete: async (id: number) =>
+    apiRequest<void>(`/admin/sportsbooks/${id}/delete/`, { method: "DELETE" }),
 };
 
-// ==================== Casinos Table (for logo selection) ====================
+// ==================== Casinos (main table) ====================
 
 export interface Casino {
-  id: number | string;
+  id: number;
+  casino_id: string | null;
   display_name: string;
-  square_logo_url: string | null;
+  link: string | null;
   logo_url: string | null;
+  square_logo_url: string | null;
+  promo_code: string | null;
+  bg_color: string | null;
   list_of_locations: string[] | null;
+  social_casino: boolean;
+  hidden: boolean;
+  display_order: number;
+  add_parameter: string | null;
+  ca_parameter: string | null;
+  us_parameter: string | null;
+  parent_casino_id: string | null;
+  signup_tutorial_link: string | null;
+  superbowl_flag: boolean;
 }
 
-export const casinosApi = {
-  // List all casinos from main table for logo selection
-  list: async () => {
-    const response = await apiRequest<{ success: boolean; count: number; results: Casino[] }>(
-      "/offers/casinos/list/"
-    );
-    // The response already contains results at the top level
-    return {
-      ...response,
-      data: (response as unknown as { results: Casino[] }).results || [],
-    };
+export const casinosAdminApi = {
+  list: async (params?: { search?: string; hidden?: boolean }) => {
+    const q = new URLSearchParams();
+    if (params?.search) q.append("search", params.search);
+    if (params?.hidden !== undefined) q.append("hidden", String(params.hidden));
+    const qs = q.toString();
+    return apiRequest<Casino[]>(`/admin/casinos/${qs ? `?${qs}` : ""}`);
   },
+
+  get: async (id: number) => apiRequest<Casino>(`/admin/casinos/${id}/`),
+
+  create: async (data: Omit<Casino, "id">) =>
+    apiRequest<Casino>("/admin/casinos/create/", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  update: async (id: number, data: Partial<Casino>) =>
+    apiRequest<Casino>(`/admin/casinos/${id}/update/`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  delete: async (id: number) =>
+    apiRequest<void>(`/admin/casinos/${id}/delete/`, { method: "DELETE" }),
 };
 
-// ==================== Export Base URL for reference ====================
+// ==================== Locations (sportsbook access per province) ====================
+
+export interface Location {
+  id: number;
+  location_id: string;
+  name: string;
+  country: string | null;
+  sportsbook_ids: string[] | null;
+}
+
+export const locationsAdminApi = {
+  list: async () => apiRequest<Location[]>("/admin/locations/"),
+  get: async (id: number) => apiRequest<Location>(`/admin/locations/${id}/`),
+  update: async (id: number, sportsbook_ids: string[]) =>
+    apiRequest<Location>(`/admin/locations/${id}/update/`, {
+      method: "PUT",
+      body: JSON.stringify({ sportsbook_ids }),
+    }),
+};
+
+// ==================== LocationCasinos (casino access per province) ====================
+
+export interface LocationCasino {
+  id: number;
+  location_casino_id: string;
+  name: string;
+  country: string | null;
+  casino_ids: string[] | null;
+}
+
+export const locationCasinosAdminApi = {
+  list: async () => apiRequest<LocationCasino[]>("/admin/location-casinos/"),
+  get: async (id: number) => apiRequest<LocationCasino>(`/admin/location-casinos/${id}/`),
+  update: async (id: number, casino_ids: string[]) =>
+    apiRequest<LocationCasino>(`/admin/location-casinos/${id}/update/`, {
+      method: "PUT",
+      body: JSON.stringify({ casino_ids }),
+    }),
+};
+
+// ==================== Bootstrap (single call for all panel data) ====================
+
+export interface AdminBootstrapData {
+  sportsbooks: Sportsbook[];
+  casinos: Casino[];
+  locations: Location[];
+  location_casinos: LocationCasino[];
+}
+
+export const adminBootstrapApi = {
+  fetch: async () => apiRequest<AdminBootstrapData>("/admin/bootstrap/"),
+};
 
 export { API_BASE_URL };

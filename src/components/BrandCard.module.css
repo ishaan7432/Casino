@@ -416,3 +416,50 @@
   box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
 }
 
+/* Disabled state for all action buttons while loading */
+.editBtn:disabled,
+.toggleVisibilityBtn:disabled,
+.deleteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Full-card loading overlay */
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 13, 26, 0.55);
+  backdrop-filter: blur(2px);
+  border-radius: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+/* Large spinner for overlay */
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid rgba(255, 255, 255, 0.12);
+  border-top-color: rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+/* Small inline spinner inside buttons */
+.btnSpinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
