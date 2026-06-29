@@ -1,465 +1,359 @@
+/* ── Card shell ── */
 .card {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(9, 13, 26, 0.5) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--border-radius-lg);
-  padding: 24px;
+  --accent: #10b981;
+  --accent-rgb: 16, 185, 129;
+  background: linear-gradient(160deg, rgba(15, 23, 42, 0.6) 0%, rgba(9, 13, 26, 0.75) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 18px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-shadow);
-  transition: var(--transition-smooth);
   position: relative;
   overflow: hidden;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  backdrop-filter: blur(18px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
   height: 100%;
 }
 
-.cardCasino {
-  --card-accent: var(--accent-casino);
-  --card-accent-rgb: var(--accent-casino-rgb);
+/* Left accent bar */
+.card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--accent);
+  opacity: 0.7;
+  border-radius: 18px 0 0 18px;
 }
 
-.cardSportsbook {
-  --card-accent: var(--accent-sportsbook);
-  --card-accent-rgb: var(--accent-sportsbook-rgb);
-}
+.cardCasino   { --accent: #10b981; --accent-rgb: 16, 185, 129; }
+.cardSportsbook { --accent: #3b82f6; --accent-rgb: 59, 130, 246; }
 
 .card:hover {
-  transform: translateY(-6px);
-  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-4px);
+  border-color: rgba(var(--accent-rgb), 0.3);
+  box-shadow: 0 12px 40px rgba(var(--accent-rgb), 0.12), 0 4px 24px rgba(0,0,0,0.35);
 }
 
-.cardCasino:hover {
-  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.12), var(--glass-shadow);
-}
-
-.cardSportsbook:hover {
-  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.12), var(--glass-shadow);
-}
-
-/* Inactive/Hidden State styles */
+/* Hidden state */
 .hiddenCard {
-  opacity: 0.6;
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.2) 0%, rgba(9, 13, 26, 0.35) 100%) !important;
-  border: 1px dashed rgba(244, 63, 94, 0.25) !important;
+  opacity: 0.65;
+  border-style: dashed;
+  border-color: rgba(244, 63, 94, 0.2);
 }
+.hiddenCard::before { background: #f43f5e; opacity: 0.5; }
+.hiddenCard:hover { opacity: 0.88; border-color: rgba(244, 63, 94, 0.4); }
 
-.hiddenCard:hover {
-  opacity: 0.9;
-  border-color: rgba(244, 63, 94, 0.45) !important;
-}
-
-.cardCasino.hiddenCard:hover,
-.cardSportsbook.hiddenCard:hover {
-  box-shadow: 0 10px 30px rgba(244, 63, 94, 0.06), var(--glass-shadow) !important;
-}
-
-/* Children styling inside hidden/inactive card */
-.hiddenCard .offerSection {
-  background: rgba(0, 0, 0, 0.35) !important;
-  border-color: rgba(244, 63, 94, 0.1) !important;
-}
-
-.hiddenCard .scoreCircle {
-  border-color: rgba(255, 255, 255, 0.1) !important;
-  color: var(--text-muted) !important;
-  text-shadow: none !important;
-}
-
-.hiddenCard .logoFallback {
-  background: linear-gradient(135deg, #374151 0%, #1f2937 100%) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-.hiddenCard .typeBadge {
-  background: rgba(255, 255, 255, 0.03) !important;
-  color: var(--text-muted) !important;
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-/* Header section */
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-}
-
-.logoContainer {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.logo {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--border-radius-md);
-  object-fit: cover;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.logoFallback {
-  width: 52px;
-  height: 52px;
-  border-radius: var(--border-radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 1.2rem;
-  color: #ffffff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.fallbackCasino {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.fallbackSportsbook {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-  border: 1px solid rgba(59, 130, 246, 0.3);
-}
-
-/* Badges */
-.badgeGroup {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.typeBadgeGroup {
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 6px;
-}
-
-.typeBadge {
-  font-size: 0.65rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 4px 10px;
-  border-radius: 20px;
-  display: inline-block;
-}
-
-.typeCasino {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--accent-casino);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.typeSportsbook {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--accent-sportsbook);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-}
-
-.statusBadge {
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.statusVisible {
-  background: rgba(16, 185, 129, 0.06);
-  color: #34d399;
-  border: 1px solid rgba(16, 185, 129, 0.15);
-}
-
-.statusHidden {
-  background: rgba(244, 63, 94, 0.06);
-  color: #f87171;
-  border: 1px solid rgba(244, 63, 94, 0.15);
-}
-
-.pulseDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: currentColor;
-  animation: pulseGlow 2s infinite ease-in-out;
-}
-
-/* Info Section */
-.name {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  margin-bottom: 4px;
-  letter-spacing: -0.02em;
-}
-
-.offerSection {
-  margin-bottom: 24px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: var(--border-radius-sm);
-  padding: 14px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.03);
-}
-
-.offerTitle {
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  margin-bottom: 6px;
-}
-
-.offerContent {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  line-height: 1.4;
-}
-
-/* Rating / Score Row */
-.detailsRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: auto;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.scoreContainer {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.scoreCircle {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 0.95rem;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
-  background-color: rgba(0, 0, 0, 0.3);
-}
-
-.scoreExcellent {
-  border: 2.5px solid var(--accent-casino);
-  color: var(--accent-casino);
-  text-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
-}
-
-.scoreGood {
-  border: 2.5px solid var(--accent-sportsbook);
-  color: var(--accent-sportsbook);
-  text-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
-}
-
-.scoreAverage {
-  border: 2.5px solid var(--accent-warning);
-  color: var(--accent-warning);
-  text-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
-}
-
-.scorePoor {
-  border: 2.5px solid var(--accent-danger);
-  color: var(--accent-danger);
-  text-shadow: 0 0 8px rgba(244, 63, 94, 0.2);
-}
-
-.scoreLabel {
-  display: flex;
-  flex-direction: column;
-}
-
-.scoreVal {
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.scoreText {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-}
-
-/* Locations */
-.locationsContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: flex-end;
-}
-
-.locTitle {
-  font-size: 0.65rem;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  font-weight: 700;
-  letter-spacing: 0.06em;
-}
-
-.locPills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
-  justify-content: flex-end;
-  max-width: 160px;
-}
-
-.locPill {
-  font-size: 0.65rem;
-  font-weight: 700;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--text-secondary);
-  padding: 2px 6px;
-  border-radius: 4px;
-  text-transform: uppercase;
-}
-
-.locPillMore {
-  font-size: 0.65rem;
-  font-weight: 700;
-  background: rgba(var(--card-accent-rgb), 0.12);
-  border: 1px solid rgba(var(--card-accent-rgb), 0.25);
-  color: var(--card-accent);
-  padding: 2px 6px;
-  border-radius: 4px;
-  cursor: help;
-  transition: var(--transition-smooth);
-}
-
-.locPillMore:hover {
-  background: rgba(var(--card-accent-rgb), 0.2);
-  transform: scale(1.05);
-}
-
-/* Actions */
-.cardFooter {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.deleteBtn {
-  background: rgba(244, 63, 94, 0.05);
-  color: #fda4af;
-  border: 1px solid rgba(244, 63, 94, 0.15);
-  padding: 6px 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: var(--border-radius-sm);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: var(--transition-smooth);
-}
-
-.deleteBtn:hover {
-  background: var(--accent-danger);
-  color: #ffffff;
-  border-color: var(--accent-danger);
-  box-shadow: 0 0 12px rgba(244, 63, 94, 0.3);
-}
-
-.toggleVisibilityBtn {
-  background: rgba(255, 255, 255, 0.03);
-  color: var(--text-secondary);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 6px 10px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: var(--border-radius-sm);
-  cursor: pointer;
-  transition: var(--transition-smooth);
-}
-
-.toggleVisibilityBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
-}
-
-.editBtn {
-  background: rgba(139, 92, 246, 0.08);
-  color: #c4b5fd;
-  border: 1px solid rgba(139, 92, 246, 0.15);
-  padding: 6px 12px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: var(--border-radius-sm);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: var(--transition-smooth);
-}
-
-.editBtn:hover {
-  background: rgba(139, 92, 246, 0.18);
-  color: #ddd6fe;
-  border-color: rgba(139, 92, 246, 0.3);
-  box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
-}
-
-/* Disabled state for all action buttons while loading */
-.editBtn:disabled,
-.toggleVisibilityBtn:disabled,
-.deleteBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
-/* Full-card loading overlay */
+/* ── Loading overlay ── */
 .loadingOverlay {
   position: absolute;
   inset: 0;
-  background: rgba(9, 13, 26, 0.55);
-  backdrop-filter: blur(2px);
+  background: rgba(9, 13, 26, 0.6);
+  backdrop-filter: blur(3px);
   border-radius: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10;
 }
-
-/* Large spinner for overlay */
 .spinner {
-  width: 28px;
-  height: 28px;
-  border: 3px solid rgba(255, 255, 255, 0.12);
-  border-top-color: rgba(255, 255, 255, 0.75);
+  width: 26px; height: 26px;
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top-color: rgba(255,255,255,0.7);
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
-
-/* Small inline spinner inside buttons */
 .btnSpinner {
   display: inline-block;
-  width: 12px;
-  height: 12px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  width: 12px; height: 12px;
+  border: 2px solid rgba(255,255,255,0.2);
   border-top-color: currentColor;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
 }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 20px 20px 0 22px;
 }
 
+.logoContainer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.logo {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+.logoFallback {
+  width: 48px; height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+.fallbackCasino    { background: linear-gradient(135deg,#10b981,#059669); }
+.fallbackSportsbook { background: linear-gradient(135deg,#3b82f6,#1d4ed8); }
+
+.nameBlock { min-width: 0; }
+
+.name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.typeBadgeGroup {
+  display: flex;
+  gap: 5px;
+  margin-top: 5px;
+  flex-wrap: wrap;
+}
+
+.typeBadge {
+  font-size: 0.6rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+.typeCasino     { background: rgba(16,185,129,0.1);  color:#34d399; border:1px solid rgba(16,185,129,0.2); }
+.typeSportsbook { background: rgba(59,130,246,0.1);  color:#60a5fa; border:1px solid rgba(59,130,246,0.2); }
+.typeSocial     { background: rgba(245,158,11,0.1);  color:#fbbf24; border:1px solid rgba(245,158,11,0.2); }
+
+.statusBadge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 99px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.statusVisible { background:rgba(16,185,129,0.08); color:#34d399; border:1px solid rgba(16,185,129,0.18); }
+.statusHidden  { background:rgba(244,63,94,0.08);  color:#fb7185; border:1px solid rgba(244,63,94,0.18); }
+
+.pulseDot {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+/* ── Info section ── */
+.infoSection {
+  padding: 16px 20px 0 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  min-width: 0;
+}
+
+.infoIcon {
+  flex-shrink: 0;
+  color: rgba(var(--accent-rgb), 0.6);
+}
+
+.infoValue {
+  color: var(--text-secondary);
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.infoLink {
+  color: rgba(var(--accent-rgb), 0.8);
+  font-weight: 500;
+  font-size: 0.72rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-decoration: none;
+}
+.infoLink:hover { color: rgba(var(--accent-rgb), 1); text-decoration: underline; }
+
+/* ── Meta row (order + provinces) ── */
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 0 22px;
+  gap: 12px;
+}
+
+.orderBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  padding: 4px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.locWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  justify-content: flex-end;
+  max-width: 200px;
+}
+
+.locPill {
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: rgba(var(--accent-rgb), 0.08);
+  border: 1px solid rgba(var(--accent-rgb), 0.18);
+  color: rgba(var(--accent-rgb), 0.9);
+  padding: 2px 7px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.locPillAll {
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  padding: 2px 7px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.locPillMore {
+  font-size: 0.6rem;
+  font-weight: 700;
+  background: rgba(var(--accent-rgb), 0.14);
+  border: 1px solid rgba(var(--accent-rgb), 0.25);
+  color: var(--accent);
+  padding: 2px 7px;
+  border-radius: 99px;
+  cursor: help;
+}
+
+/* ── Footer actions ── */
+.cardFooter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 16px 16px 22px;
+  margin-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.editBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 99px;
+  border: 1px solid rgba(139,92,246,0.2);
+  background: rgba(139,92,246,0.08);
+  color: #c4b5fd;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.editBtn:hover {
+  background: rgba(139,92,246,0.18);
+  border-color: rgba(139,92,246,0.4);
+  box-shadow: 0 0 12px rgba(139,92,246,0.2);
+}
+
+.toggleVisibilityBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 99px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.toggleVisibilityBtn:hover {
+  background: rgba(255,255,255,0.09);
+  color: var(--text-primary);
+}
+
+.deleteBtn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 99px;
+  border: 1px solid rgba(244,63,94,0.18);
+  background: rgba(244,63,94,0.06);
+  color: #fb7185;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.deleteBtn:hover {
+  background: #f43f5e;
+  border-color: #f43f5e;
+  color: #fff;
+  box-shadow: 0 0 14px rgba(244,63,94,0.35);
+}
+
+.editBtn:disabled,
+.toggleVisibilityBtn:disabled,
+.deleteBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulseGlow {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}

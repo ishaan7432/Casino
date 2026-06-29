@@ -13,7 +13,7 @@ import {
 } from "../lib/api";
 import styles from "./LocationsPanel.module.css";
 
-type Tab = "sportsbooks" | "casinos";
+type Tab = "sportsbooks" | "casinos" | "social-casinos";
 
 export default function LocationsPanel() {
   const [tab, setTab] = useState<Tab>("sportsbooks");
@@ -139,10 +139,18 @@ export default function LocationsPanel() {
     <div className={styles.panel}>
       {/* Header */}
       <div className={styles.header}>
-        <div>
-          <h2 className={styles.title}>Location Filtering</h2>
+        <div className={styles.headerLeft}>
+          <div className={styles.titleRow}>
+            <div className={styles.titleIcon}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </div>
+            <h2 className={styles.title}>Location Filtering</h2>
+          </div>
           <p className={styles.subtitle}>
-            Controls which {tab === "sportsbooks" ? "sportsbooks" : "casinos"} are shown to users per province/state via ambassador API filtering.
+            Controls which {tab === "sportsbooks" ? "sportsbooks" : tab === "casinos" ? "casinos" : "social casinos"} appear per province/state in the ambassador API.
           </p>
         </div>
         <div className={styles.tabGroup}>
@@ -150,23 +158,35 @@ export default function LocationsPanel() {
             className={`${styles.tabBtn} ${tab === "sportsbooks" ? styles.tabBtnActive : ""}`}
             onClick={() => { setTab("sportsbooks"); setExpandedId(null); setSearchQuery(""); }}
           >
+            <span className={styles.tabDot} />
             Sportsbooks
           </button>
           <button
-            className={`${styles.tabBtn} ${tab === "casinos" ? styles.tabBtnActive : ""}`}
+            className={`${styles.tabBtn} ${styles.tabBtnCasino} ${tab === "casinos" ? styles.tabBtnActive : ""}`}
             onClick={() => { setTab("casinos"); setExpandedId(null); setSearchQuery(""); }}
           >
+            <span className={styles.tabDot} />
             Casinos
+          </button>
+          <button
+            className={`${styles.tabBtn} ${styles.tabBtnSocial} ${tab === "social-casinos" ? styles.tabBtnActive : ""}`}
+            onClick={() => { setTab("social-casinos"); setExpandedId(null); setSearchQuery(""); }}
+          >
+            <span className={styles.tabDot} />
+            Social Casinos
           </button>
         </div>
       </div>
 
       {/* Search */}
       <div className={styles.searchRow}>
+        <svg className={styles.searchIcon} width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
         <input
           type="text"
           className={styles.searchInput}
-          placeholder="Search provinces..."
+          placeholder="Search provinces / countries..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
@@ -280,13 +300,20 @@ export default function LocationsPanel() {
           );
         })}
 
-        {tab === "casinos" && filteredLocationCasinos.map((loc) => {
+        {(tab === "casinos" || tab === "social-casinos") && filteredLocationCasinos.map((loc) => {
           const ids = loc.casino_ids || [];
+          const isSocial = tab === "social-casinos";
+          // In social tab only show social casino IDs; in casinos tab only show non-social
+          const visibleIds = ids.filter((cId) => {
+            const c = casinoById[cId];
+            return isSocial ? c?.social_casino === true : c?.social_casino !== true;
+          });
           const isExpanded = expandedId === loc.id;
           const isSaving = savingId === loc.id;
           const pSearch = pickerSearch[loc.id] || "";
           const availableToAdd = casinos.filter(
             (c) => c.casino_id && !ids.includes(c.casino_id) &&
+              c.social_casino === isSocial &&
               (c.display_name.toLowerCase().includes(pSearch.toLowerCase()))
           );
 
@@ -298,8 +325,8 @@ export default function LocationsPanel() {
                   <span className={styles.locCountry}>{loc.country || "—"}</span>
                 </div>
                 <div className={styles.locStats}>
-                  <span className={`${styles.idCount} ${ids.length === 0 ? styles.idCountEmpty : ""}`}>
-                    {ids.length} casino{ids.length !== 1 ? "s" : ""}
+                  <span className={`${styles.idCount} ${visibleIds.length === 0 ? styles.idCountEmpty : ""}`}>
+                    {visibleIds.length} {isSocial ? "social casino" : "casino"}{visibleIds.length !== 1 ? "s" : ""}
                   </span>
                   {isSaving && <span className={styles.savingSpinner} />}
                   <span className={styles.chevron}>{isExpanded ? "▲" : "▼"}</span>
@@ -309,12 +336,12 @@ export default function LocationsPanel() {
               {isExpanded && (
                 <div className={styles.locBody}>
                   <div className={styles.section}>
-                    <div className={styles.sectionLabel}>Currently allowed ({ids.length})</div>
-                    {ids.length === 0 ? (
-                      <p className={styles.emptyMsg}>No casinos — users in this province see nothing.</p>
+                    <div className={styles.sectionLabel}>Currently allowed ({visibleIds.length})</div>
+                    {visibleIds.length === 0 ? (
+                      <p className={styles.emptyMsg}>No {isSocial ? "social casinos" : "casinos"} — users in this province see nothing.</p>
                     ) : (
                       <div className={styles.idList}>
-                        {ids.map((casinoId) => {
+                        {visibleIds.map((casinoId) => {
                           const c = casinoById[casinoId];
                           return (
                             <div key={casinoId} className={styles.idRow}>
@@ -343,7 +370,7 @@ export default function LocationsPanel() {
                   </div>
 
                   <div className={styles.section}>
-                    <div className={styles.sectionLabel}>Add casino</div>
+                    <div className={styles.sectionLabel}>Add {isSocial ? "social casino" : "casino"}</div>
                     <input
                       type="text"
                       className={styles.pickerSearch}

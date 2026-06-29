@@ -69,7 +69,7 @@ export default function AuthModal() {
             {isLogin ? "Admin Login" : "Create Admin Account"}
           </h2>
           <span className={styles.subtitle}>
-            OfferStakes Secure Administrator Panel
+            Propslogic Secure Administrator Panel
           </span>
         </div>
 

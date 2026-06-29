@@ -26,10 +26,10 @@ export default function DashboardContainer() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [typeFilter, setTypeFilter] = useState<"all" | "casino" | "sportsbook">("all");
+  const [typeFilter, setTypeFilter] = useState<"all" | "casino" | "sportsbook" | "social-casino">("all");
   const [locationFilter, setLocationFilter] = useState("all");
   const [visibilityFilter, setVisibilityFilter] = useState<"all" | "visible" | "hidden">("all");
-  const [sortBy, setSortBy] = useState<"name-asc" | "name-desc" | "order-asc" | "order-desc">("order-asc");
+  const [sortBy, setSortBy] = useState<"name-asc" | "name-desc" | "order-asc" | "order-desc">("name-asc");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingBrand, setEditingBrand] = useState<Brand | null>(null);
@@ -264,6 +264,14 @@ export default function DashboardContainer() {
     return Array.from(locales).sort();
   }, [brands]);
 
+  const tabCounts = React.useMemo(() => ({
+    all: brands.filter((b) => !(b.type === "casino" && (b.data as Casino).social_casino)).length,
+    sportsbook: brands.filter((b) => b.type === "sportsbook").length,
+    casino: brands.filter((b) => b.type === "casino" && !(b.data as Casino).social_casino).length,
+    social: brands.filter((b) => b.type === "casino" && (b.data as Casino).social_casino).length,
+    hidden: brands.filter((b) => b.data.hidden).length,
+  }), [brands]);
+
   const getName = (brand: Brand) =>
     brand.type === "sportsbook"
       ? (brand.data as Sportsbook).sportsbook_name
@@ -277,8 +285,15 @@ export default function DashboardContainer() {
       result = result.filter((b) => getName(b).toLowerCase().includes(q));
     }
 
-    if (typeFilter !== "all") {
-      result = result.filter((b) => b.type === typeFilter);
+    if (typeFilter === "social-casino") {
+      result = result.filter((b) => b.type === "casino" && (b.data as Casino).social_casino === true);
+    } else if (typeFilter === "casino") {
+      result = result.filter((b) => b.type === "casino" && (b.data as Casino).social_casino !== true);
+    } else if (typeFilter === "sportsbook") {
+      result = result.filter((b) => b.type === "sportsbook");
+    } else {
+      // "all" — exclude social casinos so they don't pollute the main view
+      result = result.filter((b) => !(b.type === "casino" && (b.data as Casino).social_casino === true));
     }
 
     if (locationFilter !== "all") {
@@ -293,7 +308,12 @@ export default function DashboardContainer() {
       result = result.filter((b) => b.data.hidden === true);
     }
 
+    // Always: visible entries first, hidden entries after
     result.sort((a, b) => {
+      const aHidden = a.data.hidden ? 1 : 0;
+      const bHidden = b.data.hidden ? 1 : 0;
+      if (aHidden !== bHidden) return aHidden - bHidden;
+
       switch (sortBy) {
         case "name-asc":
           return getName(a).localeCompare(getName(b));
@@ -303,7 +323,7 @@ export default function DashboardContainer() {
           return b.data.display_order - a.data.display_order;
         case "order-asc":
         default:
-          return a.data.display_order - b.data.display_order;
+          return getName(a).localeCompare(getName(b));
       }
     });
 
@@ -344,26 +364,32 @@ export default function DashboardContainer() {
     <div className={styles.container}>
       <div className={styles.pageHeader}>
         <div className={styles.titleArea}>
-          <h1 className={styles.title}>PropsLogic Admin</h1>
+          <div className={styles.titleRow}>
+            <div className={styles.titleIcon}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+              </svg>
+            </div>
+            <h1 className={styles.title}>PropsLogic Admin</h1>
+          </div>
           <span className={styles.subtitle}>
-            Welcome, {user.name} | Manage sportsbooks and casinos
+            Signed in as {user.name} · Manage sportsbooks, casinos &amp; location filtering
           </span>
         </div>
         <div className={styles.headerActions}>
           <button className={styles.addBtn} onClick={() => setIsModalOpen(true)}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
             Add New
           </button>
           <button className={styles.logoutBtn} onClick={logout}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-              <polyline points="16 17 21 12 16 7" />
-              <line x1="21" y1="12" x2="9" y2="12" />
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
             </svg>
-            Logout
+            Sign Out
           </button>
         </div>
       </div>
@@ -374,12 +400,20 @@ export default function DashboardContainer() {
           className={`${styles.mainTab} ${mainTab === "offers" ? styles.mainTabActive : ""}`}
           onClick={() => setMainTab("offers")}
         >
-          Sportsbooks & Casinos
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+            <line x1="7" y1="7" x2="7.01" y2="7"/>
+          </svg>
+          Sportsbooks &amp; Casinos
         </button>
         <button
           className={`${styles.mainTab} ${mainTab === "locations" ? styles.mainTabActive : ""}`}
           onClick={() => setMainTab("locations")}
         >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
           Location Filtering
         </button>
       </div>
@@ -392,9 +426,8 @@ export default function DashboardContainer() {
       <div className={styles.controlsPanel}>
         <div className={styles.searchRow}>
           <div className={styles.searchWrapper}>
-            <svg className={styles.searchIcon} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="11" cy="11" r="8" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            <svg className={styles.searchIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
             <input
               type="text"
@@ -405,6 +438,9 @@ export default function DashboardContainer() {
             />
           </div>
 
+        </div>
+
+        <div className={styles.filtersRow}>
           <select value={locationFilter} onChange={(e) => setLocationFilter(e.target.value)} className={styles.filterSelect}>
             <option value="all">All Locations</option>
             {allLocations.map((loc) => (
@@ -417,33 +453,40 @@ export default function DashboardContainer() {
             <option value="visible">Visible Only</option>
             <option value="hidden">Hidden Only</option>
           </select>
+
+          <div className={styles.sortWrapper}>
+            <span className={styles.sortLabel}>Sort</span>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)} className={styles.filterSelect}>
+              <option value="name-asc">Name A→Z</option>
+              <option value="name-desc">Name Z→A</option>
+              <option value="order-asc">Order ↑</option>
+              <option value="order-desc">Order ↓</option>
+            </select>
+          </div>
         </div>
 
         <div className={styles.filterRow}>
           <div className={styles.tabs}>
             <button onClick={() => { setTypeFilter("all"); setVisibilityFilter("all"); }} className={`${styles.tab} ${typeFilter === "all" && visibilityFilter !== "hidden" ? styles.tabActive : ""}`}>
-              All Types
-            </button>
-            <button onClick={() => { setTypeFilter("casino"); setVisibilityFilter("all"); }} className={`${styles.tab} ${typeFilter === "casino" && visibilityFilter !== "hidden" ? styles.tabCasinoActive : ""}`}>
-              Casinos
+              All <span className={styles.tabCount}>{tabCounts.all}</span>
             </button>
             <button onClick={() => { setTypeFilter("sportsbook"); setVisibilityFilter("all"); }} className={`${styles.tab} ${typeFilter === "sportsbook" && visibilityFilter !== "hidden" ? styles.tabSportsbookActive : ""}`}>
-              Sportsbooks
+              Sportsbooks <span className={styles.tabCount}>{tabCounts.sportsbook}</span>
+            </button>
+            <button onClick={() => { setTypeFilter("casino"); setVisibilityFilter("all"); }} className={`${styles.tab} ${typeFilter === "casino" && visibilityFilter !== "hidden" ? styles.tabCasinoActive : ""}`}>
+              Casinos <span className={styles.tabCount}>{tabCounts.casino}</span>
+            </button>
+            <button onClick={() => { setTypeFilter("social-casino"); setVisibilityFilter("all"); }} className={`${styles.tab} ${typeFilter === "social-casino" && visibilityFilter !== "hidden" ? styles.tabSocialActive : ""}`}>
+              Social <span className={styles.tabCount}>{tabCounts.social}</span>
             </button>
             <button onClick={() => { setTypeFilter("all"); setVisibilityFilter("hidden"); }} className={`${styles.tab} ${visibilityFilter === "hidden" ? styles.tabActive : ""}`}>
-              Hidden
+              Hidden <span className={styles.tabCount}>{tabCounts.hidden}</span>
             </button>
           </div>
 
-          <div className={styles.sortWrapper}>
-            <span className={styles.sortLabel}>Sort By:</span>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)} className={styles.filterSelect} style={{ padding: "8px 12px", minWidth: "160px" }}>
-              <option value="order-asc">Display Order: Low→High</option>
-              <option value="order-desc">Display Order: High→Low</option>
-              <option value="name-asc">Name: A to Z</option>
-              <option value="name-desc">Name: Z to A</option>
-            </select>
-          </div>
+          <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", fontWeight: 600 }}>
+            {filteredBrands.length} result{filteredBrands.length !== 1 ? "s" : ""}
+          </span>
         </div>
       </div>
 

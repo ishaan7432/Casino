@@ -1,127 +1,174 @@
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
   margin-bottom: 36px;
   animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .card {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.4) 0%, rgba(9, 13, 26, 0.5) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: var(--border-radius-md);
-  padding: 24px;
+  --card-accent: rgba(255, 255, 255, 0.3);
+  --card-glow: rgba(255, 255, 255, 0.05);
+  background: linear-gradient(145deg, rgba(15, 23, 42, 0.55) 0%, rgba(9, 13, 26, 0.65) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 16px;
+  padding: 20px 22px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-shadow);
-  transition: var(--transition-smooth);
+  gap: 14px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
-.card::before {
+.card::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: transparent;
-  transition: var(--transition-smooth);
-}
-
-.cardCasino::before {
-  background: linear-gradient(90deg, var(--accent-casino), transparent);
-}
-
-.cardCasino:hover {
-  box-shadow: 0 0 25px rgba(16, 185, 129, 0.15), var(--glass-shadow);
-  border-color: rgba(16, 185, 129, 0.25);
-}
-
-.cardSportsbook::before {
-  background: linear-gradient(90deg, var(--accent-sportsbook), transparent);
-}
-
-.cardSportsbook:hover {
-  box-shadow: 0 0 25px rgba(59, 130, 246, 0.15), var(--glass-shadow);
-  border-color: rgba(59, 130, 246, 0.25);
-}
-
-.cardTotal::before {
-  background: linear-gradient(90deg, var(--accent-primary), transparent);
-}
-
-.cardTotal:hover {
-  box-shadow: 0 0 25px rgba(139, 92, 246, 0.15), var(--glass-shadow);
-  border-color: rgba(139, 92, 246, 0.25);
-}
-
-.cardAvg::before {
-  background: linear-gradient(90deg, var(--accent-warning), transparent);
-}
-
-.cardAvg:hover {
-  box-shadow: 0 0 25px rgba(245, 158, 11, 0.15), var(--glass-shadow);
-  border-color: rgba(245, 158, 11, 0.25);
+  inset: 0;
+  background: radial-gradient(ellipse at top left, var(--card-glow) 0%, transparent 60%);
+  pointer-events: none;
 }
 
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px var(--card-glow), 0 4px 24px rgba(0, 0, 0, 0.3);
+  border-color: var(--card-accent);
 }
 
-.label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 10px;
-}
+/* Per-type accent colours */
+.cardTotal   { --card-accent: rgba(139, 92, 246, 0.35); --card-glow: rgba(139, 92, 246, 0.12); }
+.cardSportsbook { --card-accent: rgba(59, 130, 246, 0.35); --card-glow: rgba(59, 130, 246, 0.12); }
+.cardCasino  { --card-accent: rgba(16, 185, 129, 0.35); --card-glow: rgba(16, 185, 129, 0.12); }
+.cardSocial  { --card-accent: rgba(245, 158, 11, 0.35); --card-glow: rgba(245, 158, 11, 0.12); }
 
-.value {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
-}
-
-.subText {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 10px;
+/* Top row: icon + label */
+.cardTop {
   display: flex;
   align-items: center;
+  gap: 10px;
+}
+
+.iconWrap {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.cardTotal   .iconWrap { color: #a78bfa; background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.2); }
+.cardSportsbook .iconWrap { color: #60a5fa; background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); }
+.cardCasino  .iconWrap { color: #34d399; background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2); }
+.cardSocial  .iconWrap { color: #fbbf24; background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2); }
+
+.labelRow { flex: 1; }
+
+.label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+
+/* Big number */
+.counts {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.bigNum {
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.cardTotal   .bigNum { color: #c4b5fd; }
+.cardSportsbook .bigNum { color: #93c5fd; }
+.cardCasino  .bigNum { color: #6ee7b7; }
+.cardSocial  .bigNum { color: #fcd34d; }
+
+.ofTotal {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: -0.01em;
+}
+
+/* Progress bar */
+.barTrack {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.cardTotal   .barFill { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+.cardSportsbook .barFill { background: linear-gradient(90deg, #1d4ed8, #60a5fa); }
+.cardCasino  .barFill { background: linear-gradient(90deg, #059669, #34d399); }
+.cardSocial  .barFill { background: linear-gradient(90deg, #d97706, #fbbf24); }
+
+/* Visible / hidden badges */
+.badges {
+  display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
-.indicator {
-  width: 6px;
-  height: 6px;
+.badgeVisible,
+.badgeHidden {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 99px;
+}
+
+.badgeVisible {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: var(--text-secondary);
+}
+
+.badgeHidden {
+  background: rgba(244, 63, 94, 0.07);
+  border: 1px solid rgba(244, 63, 94, 0.15);
+  color: #fb7185;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
-  display: inline-block;
+  background: currentColor;
+  opacity: 0.8;
+  flex-shrink: 0;
 }
 
-.indicatorCasino {
-  background-color: var(--accent-casino);
-  box-shadow: 0 0 8px var(--accent-casino);
+.dotHidden {
+  background: #f43f5e;
 }
 
-.indicatorSportsbook {
-  background-color: var(--accent-sportsbook);
-  box-shadow: 0 0 8px var(--accent-sportsbook);
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
-.indicatorTotal {
-  background-color: var(--accent-primary);
-  box-shadow: 0 0 8px var(--accent-primary);
-}
-
-.indicatorAvg {
-  background-color: var(--accent-warning);
-  box-shadow: 0 0 8px var(--accent-warning);
-}
-
